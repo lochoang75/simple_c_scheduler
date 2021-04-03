@@ -4,19 +4,19 @@
 #include "coffee_task.h"
 
 task_t gTaskQueue[MAX_TASK_NUMBER] = {0}; /*!< global task queue */
-static void task1_action(void) {
+static void task1_action(void* param) {
     printf("Task 1 is running \r\n");
 }
 
-static void task2_action(void) {
+static void task2_action(void* param) {
     printf("Task 2 is running \r\n");
 }
 
-static void task3_action(void) {
+static void task3_action(void* param) {
     printf("Task 3 is running \r\n");
 }
 
-static void task4_action(void) {
+static void task4_action(void* param) {
     printf("Task 4 is running \r\n");
 }
 
@@ -68,6 +68,21 @@ void reArrangeQueueByLLS() {
             } /* end if */
         } /* end nested for */
     } /* end for */
+}
+
+/** 
+ * \brief re-arrange task queue by custom task schedule 
+ */
+void reArrangeQueueCustomSchedule() {
+    /* use insertion sort */
+    for (int i = 0; i < MAX_TASK_NUMBER; i++) {
+        for (int j = 0; j < i; j++) {
+            if (compareTaskSJF(&gTaskQueue[i], &gTaskQueue[j]) == 1) {
+                swapTask(&gTaskQueue[i], &gTaskQueue[j]);
+            } /* end if */
+        } /* end nested for */
+    } /* end for */
+
 }
 
 /**

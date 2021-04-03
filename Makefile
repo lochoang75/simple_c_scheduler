@@ -6,7 +6,7 @@ clean:
 	rm -rf coffee_task.o
 	rm -rf task_queue.o
 	rm -rf task_scheduler.o
-	rm -rf simple_schedule
+	rm -rf simple_scheduler
 	rm -rf *.gch
 
 coffee_task.o: coffee_task.h coffee_task.c 

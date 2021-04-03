@@ -37,7 +37,6 @@ static inline task_t* getTask() {
     } /* end if */
 }
 
-static const int timeslot = 1;              /*!< Set time slot to 1 seconds */
 static schedule_type_t schedule_select = task_schedule_unknow;
 
 /**
@@ -57,7 +56,7 @@ static bool arrangeTaskPosition() {
         reArrangeQueueByLLS();
         break;
     case task_schedule_custom:
-        reArrangeQueueCustomSchedule;
+        reArrangeQueueCustomSchedule();
         break;
     case task_schedule_unknow:
         retVal = 1;

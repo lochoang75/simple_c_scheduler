@@ -7,7 +7,7 @@
 int main(int argc, char* argv[]) 
 {
     /* set schedule type */
-    setSchedulerType(task_schedule_LLS);
+    setSchedulerType(task_schedule_custom);
     /* Prepare for schedule */
     prepareSchedule();
 

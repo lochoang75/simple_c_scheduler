@@ -43,4 +43,6 @@ int compareTaskByPriority(const task_t *first_task, const task_t *second_task);
 int compareTaskEDF(const task_t *first_task, const task_t *second_task);
 
 int compareTaskLLS(const task_t *first_task, const task_t *second_task);
+
+int compareTaskSJF(const task_t *frist_task, const task_t *second_task);
 #endif

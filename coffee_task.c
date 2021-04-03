@@ -7,7 +7,7 @@
 /**
  * \brief check task is ready to run or not 
  */
-static bool __isReadyToRun(task_t* task) {
+static bool __isReadyToRun(const task_t* task) {
     if (task->taskStatus == task_running || task->taskStatus == task_ready) {
         return true;
     } else {
@@ -26,6 +26,7 @@ bool IsDone(task_t task) {
         /* somethings wrong here, currrent consume time is bigger than time needed to complete */
         printf("TASK: Error occur when check task is done \r\n");
     }  /* end if */
+    return false;
 } /* end function */
 
 /**
@@ -55,7 +56,7 @@ int compareTaskByPriority(const task_t *first_task, const task_t *second_task)
 } 
 
 /**
- * \brief Compare task base on each task total time 
+ * \brief Compare task base on time to deadline 
  */
 int compareTaskLLS(const task_t *first_task, const task_t *second_task) {
     if (__isReadyToRun(first_task) && __isReadyToRun(second_task)) {
@@ -84,7 +85,7 @@ int compareTaskLLS(const task_t *first_task, const task_t *second_task) {
 }
 
 /**
- * \brief Compare task base on task time slice each time use cpu
+ * \brief Compare task base on deadlline 
  */
 int compareTaskEDF(const task_t *first_task, const task_t *second_task) {
     if (__isReadyToRun(first_task) &&  __isReadyToRun(second_task))
@@ -94,6 +95,35 @@ int compareTaskEDF(const task_t *first_task, const task_t *second_task) {
         } /* end if */
 
         if (first_task->task_info->deadline > second_task->task_info->deadline) {
+            return -1;
+        } /* end if */
+    } else if (__isReadyToRun(first_task)) {
+        /* only first task is ready so set it to higher position to be select */
+        return 1;
+    } else if (__isReadyToRun(second_task)) {
+        /* only second task is ready so set it to higher position to be select */
+        return -1;
+    }
+
+    return 0;
+}
+
+/**
+ * \brief Compare task base on task execute time 
+ */
+int compareTaskSJF(const task_t *first_task, const task_t *second_task) {
+    if (__isReadyToRun(first_task) &&  __isReadyToRun(second_task))
+    {
+        int firstTaskCpuTimeRemain = first_task->task_info->timeForWorking - first_task->currentTimeConsume;
+        int secondTaskCpuTimeRemain = second_task->task_info->timeForWorking - second_task->currentTimeConsume;
+
+        if (firstTaskCpuTimeRemain < secondTaskCpuTimeRemain) {
+            return 1;
+        } /* end if */
+
+        /* current running task will have higher position, so if equal happen
+         * refer current runing task to continue running for not switch context */
+        if (firstTaskCpuTimeRemain >= secondTaskCpuTimeRemain) {
             return -1;
         } /* end if */
     } else if (__isReadyToRun(first_task)) {
