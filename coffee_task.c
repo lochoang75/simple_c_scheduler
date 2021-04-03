@@ -5,12 +5,22 @@
 #include "coffee_task.h"
 
 /**
+ * \brief check task is ready to run or not 
+ */
+static bool __isReadyToRun(task_t* task) {
+    if (task->taskStatus == task_running || task->taskStatus == task_ready) {
+        return true;
+    } else {
+        return false;
+    } /* end if */
+}
+/**
  * \brief Boolean function to check task is done or no 
  */
-inline bool IsDone(task_t task) {
-    if (task.currentTimeConsume == task.timeForWorking) {
+bool IsDone(task_t task) {
+    if (task.currentTimeConsume == task.task_info->timeForWorking) {
         return true;
-    } else if (task.currentTimeConsume < task.timeForWorking) {
+    } else if (task.currentTimeConsume < task.task_info->timeForWorking) {
         return false;
     } else {
         /* somethings wrong here, currrent consume time is bigger than time needed to complete */
@@ -31,13 +41,13 @@ void swapTask(task_t *first_task, task_t *second_task) {
 /**
  * \brief Compare task base on Priority 
  */
-inline int compareTaskByPriority(const task_t *first_task, const task_t *second_task) 
+int compareTaskByPriority(const task_t *first_task, const task_t *second_task) 
 {
-    if (first_task->priority > second_task->priority) {
+    if (first_task->task_info->priority > second_task->task_info->priority) {
         return 1;
     } /* end if */
 
-    if (first_task->priority < second_task->priority) {
+    if (first_task->task_info->priority < second_task->task_info->priority) {
         return -1;
     } /* end if */
 
@@ -47,12 +57,12 @@ inline int compareTaskByPriority(const task_t *first_task, const task_t *second_
 /**
  * \brief Compare task base on each task total time 
  */
-inline int compareTaskByLLS(const task_t *first_task, const task_t *second_task) {
-    if (first_task->taskStatus == task_ready && second_task->taskStatus == task_ready) {
+int compareTaskLLS(const task_t *first_task, const task_t *second_task) {
+    if (__isReadyToRun(first_task) && __isReadyToRun(second_task)) {
         /* compute how long deadline will happend, negative number is accept
         * if task miss the deadline */
-        int deadlineFirstTask = (first_task->deadline - first_task->counterToDeadline);
-        int deadlineSecondTask = (second_task->deadline - second_task->counterToDeadline);
+        int deadlineFirstTask = (first_task->task_info->deadline - first_task->counterToDeadline);
+        int deadlineSecondTask = (second_task->task_info->deadline - second_task->counterToDeadline);
 
         if (deadlineFirstTask < deadlineSecondTask) {
             return 1;
@@ -63,10 +73,10 @@ inline int compareTaskByLLS(const task_t *first_task, const task_t *second_task)
         } /* end if */
 
         return 0;
-    } else if (first_task->taskStatus == task_ready) {
+    } else if (__isReadyToRun(first_task)) {
         /* only first task is ready so set it to higher position to be select */
         return 1;
-    } else if (second_task->taskStatus == task_ready) {
+    } else if (__isReadyToRun(second_task)) {
         /* only second task is ready so set it to higher position to be select */
         return -1;
     } 
@@ -76,19 +86,20 @@ inline int compareTaskByLLS(const task_t *first_task, const task_t *second_task)
 /**
  * \brief Compare task base on task time slice each time use cpu
  */
-inline int compareTaskByEDF(const task_t *first_task, const task_t *second_task) {
-    if ((first_task->taskStatus == task_ready) && (second_task->taskStatus == task_ready)) {
-        if (first_task->deadline < second_task->deadline) {
+int compareTaskEDF(const task_t *first_task, const task_t *second_task) {
+    if (__isReadyToRun(first_task) &&  __isReadyToRun(second_task))
+    {
+        if (first_task->task_info->deadline < second_task->task_info->deadline) {
             return 1;
         } /* end if */
 
-        if (first_task->deadline > second_task->deadline) {
+        if (first_task->task_info->deadline > second_task->task_info->deadline) {
             return -1;
         } /* end if */
-    } else if (first_task->taskStatus == task_ready) {
+    } else if (__isReadyToRun(first_task)) {
         /* only first task is ready so set it to higher position to be select */
         return 1;
-    } else if (second_task->taskStatus == task_ready) {
+    } else if (__isReadyToRun(second_task)) {
         /* only second task is ready so set it to higher position to be select */
         return -1;
     }

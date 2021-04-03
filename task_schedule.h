@@ -12,5 +12,10 @@ typedef enum shdule_type {
     task_schedule_custom,                       /*!< Set schedule type to custom */
 } schedule_type_t;
 
-void start_schedule();
+void startSchedule();
+
+void prepareSchedule();
+
+void setSchedulerType(schedule_type_t type);
+
 #endif

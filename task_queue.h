@@ -7,6 +7,10 @@
 
 extern task_t gTaskQueue[MAX_TASK_NUMBER];
 
+void initialTaskQueue();
+
+void resetTaskQueue();
+
 void reArrangeQueueByPriority();
 
 void reArrangeQueueByEDF();
