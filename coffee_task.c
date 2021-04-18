@@ -132,7 +132,11 @@ int compareTaskSJF(const task_t *first_task, const task_t *second_task) {
     } else if (__isReadyToRun(second_task)) {
         /* only second task is ready so set it to higher position to be select */
         return -1;
+    } else {
+        if (first_task->task_info->taskId < second_task->task_info->taskId) 
+        {
+            return 1;
+        } 
     }
-
     return 0;
 }

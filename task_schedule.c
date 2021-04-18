@@ -17,7 +17,9 @@ static task_t idle_task = {&idle_task_info, 0, 0, 0, task_ready};
 static inline task_t* getTask() {
     int i = 0;
     task_t * foundTask = NULL;
+    printf("Task queue: ");
     for (; i < MAX_TASK_NUMBER; i++) {
+        printf("%d->", gTaskQueue[i].task_info->taskId);
         if ((gTaskQueue[i].taskStatus == task_ready) ||
             (gTaskQueue[i].taskStatus == task_running)) {
             
@@ -29,6 +31,7 @@ static inline task_t* getTask() {
 
         } /* end if */
     } /* end for */
+    printf("\n");
 
     if (foundTask != NULL) {
         return foundTask;
